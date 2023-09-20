@@ -1,0 +1,7 @@
+0 d{ct a}0,1:a=100:b=20:f=b^2/a^2:c=150:d=50:e=150
+1 forx=1to100:fort=1to4:p(t)=x(t):q(t)=y(t):next:y(1)=sqr(b^2-(x^2*f))
+2 x(4)=sgn(x)*(100-abs(x)):y(2)=sqr(b^2-(x(4)^2*f))
+3 x(3)=-x:y(3)=-y(1):x(2)=-x(4):y(4)=-y(2):x(1)=x:fort=1to4:u=t+1:ift=4thenu=1
+4 d{ct c} p(t)+c,q(t)+d,p(u)+c,q(u)+d,0:d{ct c} x(t)+c,y(t)+d,x(u)+c,y(u)+d,1
+5 d{ct c} p(t)+c,q(t)+e,p(u)+c,q(u)+e,0:d{ct c} x(t)+c,y(t)+e,x(u)+c,y(u)+e,1
+6 d{ct c}p(t)+c,q(t)+d,p(t)+c,q(t)+e,0:d{ct c} x(t)+c,y(t)+d,x(t)+c,y(t)+e,1:next:next:goto1
