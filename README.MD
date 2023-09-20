@@ -4,6 +4,7 @@ orbrescue.d64 (Orbital Rescue) is a compiled BASIC game inspired by Choplifter a
 
 Rescue your stranded crew mates and return them to base before fuel runs out.  Destroy the turrets before they destroys you.
 
+https://www.youtube.com/watch?v=C2v4Emn6iEg&t=159s
 
 10line2023-PetRaid placed 3rd in the 2023 BASIC 10 liner contest
 
