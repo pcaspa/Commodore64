@@ -1,0 +1,229 @@
+1 rem Cut and Past into CBM PRG Studio
+4 rem@ {pound}byte sh,sd,x,y,x1,lv,an,fc,fs,j,k,fx,fy,sx,sy,pl,fl,i,z,pv,mt,px,fa,fg
+5 rem@ {pound}byte ba,gl,ag,l3,ix,iy,c
+6 rem@ {pound}integer sc,hs,vm,cm,m
+7 rem@ {pound}string l1$,l2$,l3$,m1$,m2$,m3$,i0$,i1$,i2$,i3$,j0$,j1$,j2$,j3$
+10 dimi$,j$(3),ix(3),iy(3):an=1:dimc(3)
+12 dimi0$(4),i1$(4),i2$(4),i3$(4),j0$(4),j1$(4),j2$(4),j3$(4)
+15 vm=1024:cm=55296
+20 poke53280,0:poke53281,0
+30 gosub5000:rem setup sound
+50 gosub1000:rem petscii strings
+60 it=0:ds=3:dl=1:gosub2000:sh=ds:gl=dl:rem intro screen
+80 print"{clear}":gosub1050:gosub1100:rem new level - setup raiders
+85 fx=0:fs=0:fc=0:c(0)=3:c(1)=3:c(2)=3:c(3)=3:sd=1:mt=0:rem setup variables
+90 ix(0)=0:ix(1)=0:ix(2)=0:ix(3)=0:y=gl-1:fa=71:ba=126:ag=0:sx=37
+95 c(0)=3:c(1)=3:c(2)=3:c(3)=3:sd=1:mt=0
+100 rem main loop
+150 y=y+1
+155 x1=-1:lv=3
+165 gosub 850:iffx>0thengosub800:rem drop bomb and fire
+170 lv=lv+1:iflv=4thenlv=1:goto185:rem cycle row of raiders
+180 goto 240
+185 print"{home}{yellow}score:"+str$(sc)+"{space*2}hi score:"+str$(hs)+"{space*2}lvl:"+str$(gl)
+190 print"{home}{right*36}"+right$("{^*2} ",sh)
+205 an=an+1:ifan=3thenan=1:rem cycle raider animation
+210 x1=x1+1:x=x1:ifx1>13thenx=26-x1
+220 printleft$("{home}{down*10}",y+1)
+240 ifx1=0thenprint"{up}{space*38}"
+245 onlvgoto250,260,270:rem cycle 1 row
+250 ifan=1thenprintleft$("{space*20}",x)+l1$+"{down*3}":goto280
+255 printleft$("{space*20}",x)+m1$+"{down*3}":goto280
+260 ifan=1thenprintleft$("{space*20}",x)+l2$+"{down*3}":goto280
+265 printleft$("{space*20}",x)+m2$+"{down*3}":goto280
+270 ifan=1thenprintleft$("{space*20}",x)+l3$+"{down*3}":px=x:goto 280
+275 printleft$("{space*20}",x)+m3$+"{down*3}":px=x
+280 iffc=1theniflv=3thenfc=0:gosub1150:rem clear exploded raider
+285 gosub 850:rem drop boms
+290 iffs=0then300
+295 gosub700:goto420:rem explode ship
+300 k=peek(197):j=peek(56320):rem get keyboard and joystick
+310 if (jand4)=0 or k=12 thenifsx>1thensd=2:rem move left
+315 if(jand8)=0 or k=23 thenifsx<38thensd=1:rem move right
+320 if(jand16)=0ork=1theniffx=0thenifag=0thenfx=sx:fy=23:fg=fa:ls=150:gosub5200
+330 ifsd=0then420
+340 gosub550:sd=0:rem move ship
+420 ifti>tthengosub5025:t=ti+25
+480 ifx1=26thenif lv=3then495
+490 goto 165
+495 if y=10 thengosub5100:fs=1:gosub700:y=6:print"{clear}";:rem raiders too low
+498 goto150: rem raiders move down
+499 rem end main loop
+550 rem ship animation
+555 iffa-sd=70then600
+560 if sd=1 then sl=vm+40*23+sx+2:goto570
+562 sl=vm+40*23+sx-2
+570 if peek(sl)=32then580
+571 if peek(sl)=96then580
+575 fs=1:gosub5100:gosub700:return
+580 if peek(sl+40)=32then600
+581 ifpeek(sl+40) =96 then600
+585 fs=1:gosub5100:gosub700:return
+600 if sd=2 then 605
+601 if fa=71thenfa=72:goto620
+603 fa=71:sx=sx+1:goto610
+605 if fa=72thenfa=71:goto610
+606 fa=72:sx=sx-1:goto620
+610 pokevm+40*23+sx-2,32:pokevm+40*23+sx-1,123:pokevm+40*23+sx,97
+612 pokevm+40*23+sx+1,123:pokevm+40*23+sx+2,32
+615 pokevm+40*24+sx-2,32:pokevm+40*24+sx-1,236:pokevm+40*24+sx,226
+617 pokevm+40*24+sx+1,97 :pokevm+40*24+sx+2,32:goto630
+620 pokevm+40*23+sx-2,32:pokevm+40*23+sx-1,108:pokevm+40*23+sx,225
+622 pokevm+40*23+sx+1,108:pokevm+40*23+sx+2,32
+625 pokevm+40*24+sx-2,32:pokevm+40*24+sx-1,225:pokevm+40*24+sx,226
+627 pokevm+40*24+sx+1,251:pokevm+40*24+sx+2,32
+630 pokecm+40*23+sx-1,15 :pokecm+40*23+sx,15:pokecm+40*23+sx+1,15
+635 pokecm+40*24+sx-1,15 :pokecm+40*24+sx,15:pokecm+40*24+sx+1,15
+645 return
+700 rem ship hit
+705 pokevm+40*23+sx-2,32:pokevm+40*23+sx-1,rnd(1)*8+97 :pokevm+40*23+sx,102
+707 pokevm+40*23+sx+1,rnd(1)*8+97:pokevm+40*23+sx+2,32
+710 pokevm+40*24+sx-2,32:pokevm+40*24+sx-1,rnd(1)*8+97 :pokevm+40*24+sx,102
+715 pokevm+40*24+sx+1,rnd(1)*8+97:pokevm+40*24+sx+2,32
+725 pokecm+40*23+sx-1,2:pokecm+40*23+sx,2
+727 pokecm+40*23+sx+1,2
+730 pokecm+40*24+sx-1,2:pokecm+40*24+sx,2
+735 pokecm+40*24+sx+1,2
+740 fs=fs+1:iffs=10thenfs=0:sd=1:sh=sh-1:goto 750
+745 return
+750 pokevm+40*23+sx-1,32:pokevm+40*23+sx,32
+755 pokevm+40*23+sx+1,32
+760 pokevm+40*24+sx-1,32:pokevm+40*24+sx,32
+765 pokevm+40*24+sx+1,32
+770 ifsh=0thengosub1200:goto60
+795 sx=37:return
+800 rem ship fire laser
+801 iffy=23then805
+802 poke(vm+fy*40+fx),96
+805 fy=fy-1:iffy<y+10thenfx=0:return
+810 sl=vm+fy*40+fx:pl=peek(sl)
+820 if pl=32 or pl=96thenpokesl,fg:pokecm+fy*40+fx,10:return
+830 ifpl=123orpl=126 orpl=42thenfx=0:return
+835 fh=int((fx-px)/6):sc=sc+80-c(fh)*20:c(fh)=c(fh)-1:fc=1:fx=0:gosub5100
+840 i3$(fh)=ba$:j3$(fh)=ba$:gosub1125
+845 return
+850 rem raider bombs
+851 i=i+1:ifi=4theni=0:ifag=1thenifix(0)+ix(1)+ix(2)+ix(3)=0theniffc=0then900
+852 ifi=0thenba=ba-3:ifba=120thenba=126
+853 if c(i)=0andix(i)=0thenreturn
+854 ifix(i)>0then 859
+855 iffs>0 or ba=123 or ag=1 or x<3then return
+856 z=x+i*6+3:ifz=sxori=lvthen858
+857 return
+858 ix(i)=z:iy(i)=y+11:goto860
+859 pokevm+iy(i)*40+ix(i),96
+860 ifba=126theniy(i)=iy(i)+1:ifiy(i)>24thenix(i)=0:return
+862 ifba=126thenifgl>ithenifiy(i)<23 thenix(i)=ix(i)+sgn(sx-ix(i))
+865 sl=vm+iy(i)*40+ix(i):pv=peek(sl):cl=cm+iy(i)*40+ix(i)
+870 ifba=123thenpokesl,ba:return
+872 ifpv=32 or pv=96thenpokesl,ba:pokecl,2:return
+875 if pv=fg then fx=0:ix(i)=0:pokesl,96:return
+880 ifiy(i)=23thenfs=1:gosub5100:gosub700
+885 ix(i)=0
+895 return
+900 gl=gl+1:ifgl=9thengosub1250:goto60
+910 goto 80
+1000 rem char setup
+1005 a1$="{cyan}{space*2}{sh -} {cm a}{space*2}{down}{left*7} {cm a}{reverse on}W.W{reverse off}{cm x}{space*2}{down}{left*8}{space*2}{reverse on}{cm b}{cm t}{reverse off}{cm b}{space*2}"
+1010 b1$="{cyan}{space*2}{cm s} {sh -}{space*2}{down}{left*7} {cm z}{reverse on}Q.Q{reverse off}{cm s}{space*2}{down}{left*8}{space*2}{reverse on}{cm b}{cm u}{reverse off}{cm b}{space*2}"
+1015 a2$="{purple}{space*2}M N{space*2}{down}{left*7} {reverse on}{sh pound}Q.Q{cm asterisk}{reverse off}{space*2}{down}{left*8} >{cm z}{reverse on}{cm u}{reverse off}{cm x}< "
+1020 b2$="{purple}{space*2}{cm n} {cm h}{space*2}{down}{left*7} {reverse on}{sh pound}W.W{cm asterisk}{reverse off}{space*2}{down}{left*8} <{cm z}{reverse on}{cm u}{reverse off}{cm x}> "
+1025 a3$="{green} {reverse on}{sh pound}{cm asterisk}{reverse off}{cm p}{reverse on}{sh pound}{cm asterisk}{reverse off} {down}{left*7} J{reverse on}{cm f}.{cm d}{reverse off}K{space*2}{down}{left*8}{space*2}{reverse on}{cm d}{cm u}{cm f}{reverse off}{space*2}"
+1030 b3$="{green} {reverse on}{sh pound}{cm asterisk}{reverse off}{cm p}{reverse on}{sh pound}{cm asterisk}{reverse off} {down}{left*7} J{reverse on}{cm f}.{cm d}{reverse off}K{space*2}{down}{left*8} {reverse on}{cm k}{reverse off}{cm u}{reverse on}{cm t}{reverse off}{cm u}{cm k} "
+1045 ba$="{red} M**:N {down}{left*7} {sh asterisk}*{cm +*2}* {down}{left*7} ***** "
+1046 bl$="{space*7}{down}{left*7}{space*7}{down}{left*7}{space*7}"
+1050 for z=0to3
+1054 i0$(z)=bl$:j0$(z)=bl$
+1055 i1$(z)=a1$:j1$(z)=b1$
+1056 i2$(z)=a2$:j2$(z)=b2$
+1057 i3$(z)=a3$:j3$(z)=b3$
+1060 next z
+1090 s$="{space*2}^{space*2}{down}{left*5} {cm q}{reverse on} {reverse off}{cm w} "
+1099 return
+1100 rem setup raider 2
+1102 l1$="":l2$="":l3$=""
+1105 m1$="":m2$="":m3$=""
+1109 forz=0to3
+1110 l1$=l1$+i1$(z)+"{left}{up*2}"
+1111 m1$=m1$+j1$(z)+"{left}{up*2}"
+1112 l2$=l2$+i2$(z)+"{left}{up*2}"
+1113 m2$=m2$+j2$(z)+"{left}{up*2}"
+1114 l3$=l3$+i3$(z)+"{left}{up*2}"
+1115 m3$=m3$+j3$(z)+"{left}{up*2}"
+1117 next z:if it=0 thenreturn
+1120 l2$="{space*7}{pink}welcome to {down}{left*15}{space*18}{down}"
+1121 l2$=l2$+"{left*18} retro{space*2}ramblings {up*2}":m2$=l2$
+1122 return
+1125 l3$="":m3$=""
+1129 forz=0to3
+1134 l3$=l3$+i3$(z)+"{left}{up*2}"
+1135 m3$=m3$+j3$(z)+"{left}{up*2}"
+1140 next z: return
+1150 rem setup raider levels
+1160 ifc(0)+c(1)+c(2)+c(3)= 0thenag=1
+1170 i3$(fh)=i2$(fh):j3$(fh)=j2$(fh)
+1175 i2$(fh)=i1$(fh):j2$(fh)=j1$(fh)
+1180 i1$(fh)=i0$(fh):j1$(fh)=j0$(fh)
+1190 fh=0:goto1100
+1200 print"{home}{down*8}{red}{right*8}{space*23}"
+1202 print"{right*8}{space*2}UIUIU{cm r}I{cm a}{cm s}{space*2}UI{cm s}{cm a*2}{cm s}{cm a}I{space*2}"
+1205 print"{right*8}{space*2}{sh -}{cm r}{cm q}{cm w}{sh -}{sh -}{sh -}{cm q}{space*3}{sh -}{sh -}{sh -}{sh -}{cm q} {cm q}{cm w}{space*2}"
+1210 print"{right*8}{space*2}JK{cm z*6}{cm x}{space*2}JK{cm c}{cm v}{cm z}{cm x}{cm z*2}{space*2}"
+1215 print"{right*8}{space*23}"
+1220 ifsc>hsthenhs=sc
+1230 sc=0:t=ti+300
+1240 ifti<tthen1240
+1245 return
+1250 print"{home}{down*9}{green}{right*5}{space*27}"
+1252 print"{right*5}{space*2}UI{cm a*4}{cm s}UIUI{cm a}{cm r}{cm s}{cm a}{cm s} {cm a*5}{cm s}{space*2}"
+1255 print"{right*5}{space*2}{cm q}{cm w}{sh -}{sh -}{sh -}{cm q} JI{sh -}{sh -}{sh -}{sh -}{sh -}{cm q}{space*2}{sh -}{sh -}{sh -}{sh -}{sh -}{sh -}{space*2}"
+1260 print"{right*5}{space*2}{cm z*3}{cm e}{cm x}{cm z}{cm x}JKJK{cm z*4}{cm x} {cm z}{cm e}{cm x}{cm z*3}{space*2}"
+1266 print"{right*5}{space*27}"
+1270 t=ti+300
+1280 ifti<tthen1280
+1285 return
+2000 print"{clear}{yellow}{space*14}high score:"+str$(hs)
+2010 print"{down}{dark gray}{space*6}{cm a}I{cm a}{cm s}{cm r}UIUI{cm s}{cm a}{space*2}{cm a}IUI{cm a*2}I{cm a}{cm s}{cm a}IUI"
+2012 print"{gray}{space*6}{cm q}K{cm q} {sh -}JI{sh -} {sh -}{sh -}{space*2}{cm q}{cm w}{cm q}{cm w}{sh -}{sh -}{sh -}{cm q} {cm q}{cm w}JI"
+2015 print"{light gray}{space*6}{cm z} {cm z}{cm x}{cm z}JKJK{cm x}{cm z}{space*2}{cm z*6}K{cm z}{cm x}{cm e}{cm z}JK"
+2020 print"{down*2}{space*10}"+a1$+"{light blue}{up}{space*2}60 points"
+2022 print"{down*2}{space*10}"+a2$+"{light blue}{up}{space*2}40 points"
+2025 print"{down*2}{space*10}"+a3$+"{light blue}{up}{space*2}20 points"
+2030 print"{down*3}{green}keyboard return or joypad fire to start"
+2040 print"{down}{cyan}{space*2}z,x left or right{space*4}return to fire";:t=0
+2050 k=peek(197):j=peek(56320)
+2055 if k=42thendl=8:rem cheats
+2056 if k=13thends=999
+2057 if k=33thenit=1
+2060 if(jand16)=0 or k=1 then return
+2065 ifti>tthengosub5025:t=ti+25
+2070 goto2050
+5000 for z2= 54272 to 54296 : poke z2,0 : next
+5010 m = 54272
+5015 poke 54296, 15:remvolume
+5020 poke 54277,9 :poke54278,63:return:rem att/dec,sus/rel
+5025 poke 54276,16:rem wave
+5030 mt=mt+1:ifmt=9thenmt=1
+5035 on mt goto 5040,5042,5044,5046,5048,5050,5052,5054
+5040 poke m + 1,5 : poke m,71 :goto5090
+5042 poke m + 1,5 : poke m,71 :goto5090
+5044 poke m + 1,5 : poke m,237:goto5090
+5046 poke m + 1,5 : poke m,71 :goto5090
+5048 poke m + 1,6 : poke m,71 :goto5090
+5050 poke m + 1,5 : poke m,71 :goto5090
+5052 poke m + 1,6 : poke m,167:goto5090
+5054 poke m + 1,6 : poke m,71 :goto5090
+5090 poke m + 4,17
+5095 return
+5100 poke54290,0
+5110 poke54291,09:poke54292,0:poke54287,10:poke54286,0:poke54290,129
+5150 return
+5200 poke54283,00
+5201 poke54290,0
+5210 poke54284,009:poke54285,000:poke54280,020:poke54279,0:poke54283,33
+5211 rempoke54291,009:poke54292,0:poke54287,045:poke54286,0:poke54290,17
+5220 return
+5240 poke54280,120:end
+5250 ls=ls-50
+5260 ifls=0thenpoke54284,0:poke54285,0:poke54283,0
+5270 return
