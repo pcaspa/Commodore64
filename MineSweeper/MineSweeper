@@ -1,0 +1,114 @@
+1 rem cut and paste into CBM PRG Studio
+5 rem@ {pound}integer d(
+6 rem@ {pound}byte m(,qx(,qy(,c(,qc,qt,dx,dy,x,y
+10 dimm(20,12),d(20,12): rem mine and display field
+12 dimqx(209),qy(209):rem flood fill queue
+13 dimc(10): rem colors codes for pokes
+15 c(1)=11:c(2)=11:c(3)=4:c(4)=14:c(5)=6:c(6)=10:c(7)=2:c(8)=2
+20 dx=1:dy=1:rem set initial grid reference
+22 dm=1024:cm=55296-dm: rem display and colour memory
+25 poke53280,15:poke53281,15: rem set screen and border colour
+27 rem intro screen
+29 print"{clear}{down}{reverse on}{red}{right*5}{space*30}{reverse off}"
+30 print"{reverse on}{right*5} retro ramblings mine sweeper {reverse off}"
+31 print"{reverse on}{right*5}{space*30}{reverse off}"
+32 print"{down}{green}{space*6}youtube.com/c/retroramblings"
+33 print"{down*2}{purple}flag all the mines without hitting any"
+35 print"{down*2}{blue}keys"
+40 print"{down}{dark gray}w-up a-left s-down d-right"
+45 print"{down}space-flag mine{space*2}return-check for mine"
+50 input"{down}{blue}number of rows{space*2}(max 10)";ir
+55 ifir<1orir>10thenprint"incorrect entry":goto50
+60 input"number of columns (max 19)";ic
+65 ific<1oric>19thenprint"incorrect entry":goto60
+70 input"number of mines";im
+75 if im>=ir*icthenprint"too many":goto70
+80 forc=1toim:rem create mine field
+85 x=int(rnd(1)*ic)+1:y=int(rnd(1)*ir)+1
+90 ifm(x,y)=1then85: rem mine exists
+95 m(x,y)=1:next
+100 for x=1toic:fory=1toir:d(x,y)=-1:next:next:rem set grid to not revealed
+110 print"{clear}":gosub150:gosub155:rem render header and grid
+120 goto 200
+150 print"{home}{red}minesweeper{purple}{space*3}mines"im"{space*2}flagged"dc:return
+155 print"{blue}{cm a}"left$("{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}{sh asterisk}{cm r}",ic*2-2)"{sh asterisk}{cm s}"
+160 fory=1toir
+165 forx=1toic
+170 print"{blue}{sh -}"mid$("{black}{cm +}{black}{cm +}{dark gray} {dark gray}1{dark gray}2{purple}3{light blue}4{blue}5{pink}6{red}7{red}8{pink}W{red}Q{red}V",d(x,y)*2+5,2);
+175 next:print"{blue}{sh -}"
+180 ify<irthen print"{blue}{cm q}"left$("{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}{sh asterisk}{sh +}",ic*2-2)"{sh asterisk}{cm w}"
+190 next
+195 print"{blue}{cm z}"left$("{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}{sh asterisk}{cm e}",ic*2-2)"{sh asterisk}{cm x}":return
+200 rem main loop
+205 ml=dm+dx*2-1+dy*80:rem screen ram location for cursor
+210 p=peek(ml):getg$:rem get grid location values and key input
+214 if int(timer/15)/2=int(timer/30)then220:rem timer for flashing cursor
+215 ifp>128thenpokeml,p-128
+216 goto221
+220 ifp<128thenpokeml,p+128
+221 ifg$="" then210
+223 p=peek(ml):ifp>128thenpokeml,p-128:rem reset cursor before moving
+224 rem toggle flag
+225 ifg$=" "andd(dx,dy)=-1thend(dx,dy)=9:pokeml,87:pokeml+cm,10:dc=dc+1:goto500
+227 ifg$=" "andd(dx,dy)=9thend(dx,dy)=-1:pokeml,102:pokeml+cm,0:dc=dc-1
+230 ifg$=" " then gosub 150:printleft$("{down*22}",ir*2):rem update header
+235 ifg$=chr$(13)andd(dx,dy)<>9thengosub300:rem check for mine
+240 ifg$="s"thendy=dy+1:rem move down
+245 ifg$="w"thendy=dy-1:rem move up
+250 if dy<1thendy=1:rem limit check
+251 if dy>irthendy=ir
+260 ifg$="d"thendx=dx+1:rem move right
+261 if dy>irthendy=ir
+265 ifg$="a"thendx=dx-1:rem move left
+270 if dx<1thendx=1
+271 if dx>icthendx=ic
+290 goto 200:rem back to main loop
+295 rem check for mine
+300 if m(dx,dy)=1then400:rem mine exists - bang
+302 if d(dx,dy)=0thenreturn:rem blank space
+310 qc=0:qt=0:rem flood fill - queue counter and queue total
+325 qx(qt)=dx:qy(qt)=dy:qt=qt+1:rem set queue to check current location
+330 gosub350:d(dx,dy)=bc
+331 ifbc=0then334
+332 d(dx,dy)=bc:pokeml,48+bc:pokeml+cm,c(bc):return
+334 print"{blue}thinking - please wait{up}":rem flood fill
+335 gosub350
+340 qc=qc+1:ifqc<=qtthen335
+345 gosub150:gosub155:print"{space*25}{up}":return
+350 bc=0:rem search around current location for mines
+354 fory=qy(qc)-1toqy(qc)+1
+355 forx=qx(qc)-1toqx(qc)+1
+356 ifx<1orx>icthen370:rem outside grid
+357 ify<1ory>irthen370:rem outside grid
+358 if x=qx(qc)andy=qy(qc)then370:rem skip search grid center
+360 bc=bc+m(x,y):rem count mines
+370 next:next
+375 ifm(qx(qc),qy(qc))=0thend(qx(qc),qy(qc))=bc:rem store no of mines
+377 ifbc>0thenreturn
+378 rem search surrounding
+379 forx=qx(qc)-1toqx(qc)+1
+380 fory=qy(qc)-1toqy(qc)+1
+381 ifx=qx(qc)andy=qy(qc)then390
+382 ifx<1orx>icthen390
+383 ify<1ory>irthen390
+384 ifd(x,y)<>-1then390:rem check if already searched
+387 qx(qt)=x:qy(qt)=y:qt=qt+1:d(x,y)=-2:rem set to searched
+390 next:next
+395 return
+399 rem hit mine
+400 fory=1toir
+410 forx=1toic
+420 ifm(x,y)=1thend(x,y)=10:rem set d to show mines
+425 ifm(x,y)=0andd(x,y)=9thend(x,y)=11:rem show bad flag
+430 next:next
+435 gosub 150:gosub155:rem render mines and bad flags
+440 print"{red}bang - you lost. hit r to restart";
+450 get g$:ifg$<>"r"then450
+460 run
+500 if dc<imthen230:rem check for win
+510 fory=1toir
+512 forx=1toic
+520 ifm(x,y)=1andd(x,y)<>9then230:rem bad flag
+530 next:next
+540 gosub 150:printleft$("{down*22}",ir*2)
+550 print"{purple}congratulations!!! hit r to restart":goto 450
