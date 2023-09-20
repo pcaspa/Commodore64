@@ -1,0 +1,19 @@
+1 rem cut and paste into CBM PRG Studio
+5 print"{clear}{space*7}v-gate motor controller"
+10 poke56577,1:poke56579,255:f=200:t=50:i=10:pt=ti
+50 poke56577,1
+60 gosub 120:forx=1tof:nextx
+70 poke56577,0
+80 gosub 120:forx=1tot:nextx
+90 r=(ti-pt)/100:pt=ti
+100 print"{down} rpm"int(1/r*60)
+110 goto 50
+120 print"{home}{down*3} off"f"{left}{space*3}engaged"t"{left}{space*3}inc"i"{left} "
+130 getg$
+140 if g$="q"thenf=f+i
+141 if g$="a"thenf=f-i
+142 if g$="w"thent=t+i
+143 if g$="s"thent=t-i
+145 if g$="."theni=i+1
+146 if g$=","theni=i-1
+150 return
