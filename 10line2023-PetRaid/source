@@ -1,0 +1,10 @@
+0 dims$(42):n=54272:v=53248:x=99:reada$,p$,d$:b$="{down*2}"+a$+a$+a$+a$+"{down}":i$="{148} {down}{left}":j$=" "+chr$(20)+"{down}":fort=1to23:l$=l$+i$
+1 m$=m$+j$:next:print"{clear}";:pokev+1,229:pokev+5,99:poke2040,13:poke2041,14:poke2042,15:sys59749:poke210,208:printtab(21)p$:poke995,7:poke998,7
+2 fort=832to892step3:poket+1,asc(mid$(d$,(t-832)/3+1,1)):poket+66,1:d=d+1:s$(d)=l$:s$(d+21)=m$:next:poken+24,15:poken+5,9
+3 poken+6,63:pokev+30,0:poken+4,33:pokev+30,0:h=0:c=0:e=40:b=165:l=l+1:print"{home}{yellow}"b$:print"{green}"b$:ifl>1thenprint"{purple}"b$:ifl>2thenprint"{cyan}"b$
+4 print"{home}{light green}hits"s"{left}{space*2}{blue}level"l"{left}{space*2}{red}{cm q}{reverse on}--{reverse off}{cm w}":print"{home}{down}";:c=c+1:prints$(c)"{home}":ifc=21orc=42thensys59777:b=165:e=40
+5 b=b+sgn(x-b)*(l+1):e=e+12:e=abs(255-e):e=255-e:j=peek(56320):x=abs(x+6*(sgn(jand4)-sgn(jand8))):x=abs(255-x):x=255-x:ifc=42thenc=0
+6 pokev+4,b:pokev+5,e:i=0:pokev,x:pokev+2,x:if(jand16)=16thenforz=1to150:next:goto9:data " {cm b} {reverse on}{cm b}{reverse off} {down}{left*5} {reverse on}W.W{reverse off} {down}{left*5} {reverse on}{cm b}{cm t}{reverse off}{cm b} {up*2}{left}"
+7 pokev+2,x:forj=208to80step-8:pokev+3,j:poken+1,j:if(peek(v+31)and2)=0thennext:goto9:data"7{right}0{right*3}0{right}1{right}000{right*5}311"
+8 fp=1024+(x)/8+int((j-42)/8)*40:i=sgn(peek(fp)-32)+sgn(peek(fp-40)-32):h=h+i:pokefp,32:pokefp-40,32:ifh=32+l*32orh=128then3
+9 s=s+i:poken+1,20:pokev+3,0:poken+1,0:ifpeek(v+31)<>1and(peek(v+30)and1)=0then4:data"zzzzzzz{cm x*3}{pi}{pi}{cm x*5}{pi}{pi}{cm x*2}"
