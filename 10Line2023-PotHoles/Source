@@ -1,0 +1,10 @@
+0 A$="{space*10}":R$(1)="{reverse on}{cm k} {reverse off}{cm k}"+A$+"{reverse on}{cm k} {reverse off}{cm k}":R$(0)="{reverse on}{space*2}{reverse off}"+A$+" {reverse on}{space*2}{reverse off}":N=54272:PRINT"{clear}{white}";
+1 S=TI:V=53248:W=255:T=120:X=50:POKEV+1,220:POKE2040,13:SYS59749:POKE210,208:POKEN+24,15
+2 U=1:POKEN+5,9:POKEN+6,63:PRINTTAB(21)"1{right}0{right*3}0{right}1{right}000":POKEV+39,14:FORT=832TO892STEP3:POKET,0
+3 POKET+1,ASC(MID$("<<<{sh +}{pi}{pi}{sh +}<<<<<<{sh +}{pi}{pi}{sh +}<{pi}{pi}{pi}",(T-832)/3+1,1)):PRINTR$(0):POKET+2,0:NEXT:POKEN+4,33
+4 PRINT"{home}{yellow}{reverse off}speed"305-W"{left}{space*2}{cyan}timer"L"{left}{space*2}{pink}distance"INT(D)/100"{left} km{space*2}":PRINT"{home}{down*2}";:IFW<0THENW=0
+5 PRINTLEFT$("{white}{red}",C+1)LEFT$(A$+A$,R/2)R$((R/2-INT(R/2))*2):C=1-C:IFR<1THENR=1
+6 POKEV,X:IFRND(.)>.8THENP=1108+R/2+RND(.)*7:POKEP,87:POKEP+N,12:U=INT(RND(.)*3)-1
+7 J=PEEK(56320):X=X+4*(SGN(JAND4)-SGN(JAND8)):D=D+1.3:R=R+U:IFR>36THENR=36
+8 W=W+10+20*PEEK(V+31)-(16-(JAND16)):POKEN+1,25-W/15:IFW>255THENW=255
+9 FORZ=1TOW:NEXT:SYS59777:L=60-INT((TI-S)/100):IFL>0THEN4
