@@ -1,0 +1,47 @@
+Expanded and commented version.  Can be cut and pasted directly into CBM prg Studio
+----------------
+
+0 dims$(42):N=54272:V=53248:X=99:reada$,p$,d$:rem setup variables
+1B$="{down*2}"+A$+A$+A$+A$+"{down}":rem setup raider string
+2I$="{148} {down}{left}":J$=" "+CHR$(20)+"{down}":FORT=1TO23:L$=L$+I$
+
+10 M$=M$+J$:NEXT:rem create strings to shift raiders left and right
+11PRINT"{clear}";:POKEV+1,229:POKEv+5,99:rem sprite initial locations
+12POKE2040,13:POKE2041,14:POKE2042,15:rem setup sprite memory locations
+13SYS59749:rem initiate vertical scrolling call
+14POKE210,208:PRINTTAB(21)p$:rem setup sprite with print to memory hack
+15POKE995,7:POKE998,7:rem rem draw bomb sprite
+
+20 FORT=832TO892STEP3:POKET+1,ASC(MID$(d$,(T-832)/3+1,1)):POKET+66,1:rem draw ship and laser sprite
+21d=d+1:s$(d)=L$:s$(d+21)=M$:NEXT:rem create strings to shift raiders left and right
+22 POKEN+24,15:POKEN+5,9:rem setup sound
+
+
+30 POKEN+6,63:POKEV+30,0:POKEN+4,33:pokev+30,0:rem setup sound
+31 h=0:c=0:e=40:b=165:l=l+1:rem initial variable settings
+32 PRINT"{home}{yellow}"b$:?"{green}"b$:ifl>1then?"{purple}"b$:ifl>2then?"{cyan}"b$:rem setup screen
+
+40 PRINT"{home}{light green}hits"S"{left}  {blue}level"l"{left}  {red}{cm q}{reverse on}--{reverse off}{cm w}":PRINT"{home}{down}";:rem draw header
+41C=C+1:?s$(c)"{home}":IFC=21orc=42THENSYS59777:B=165:e=40:rem scroll raiders and reset bomb
+
+50 b=b+sgn(x-b)*(l+1):e=e+12:e=abs(255-e):e=255-e:rem move bomb
+51J=PEEK(56320):X=abs(X+6*(SGN(JAND4)-SGN(JAND8))):x=abs(255-x):x=255-x:rem move ship
+52 ifc=42thenc=0:rem reset scrolling
+
+60 pokev+4,b:pokev+5,e:i=0:rem render bomb
+61 POKEV,X:POKEV+2,X:rem set x position for ship and laser
+62 if(JAND16)=16thenforz=1to150:next:rem delay when not firing
+63 goto90:data "{space}{cm b} {reverse on}{cm b}{reverse off}{space}{down}{left*5} {reverse on}W.W{reverse off}{space}{down}{left*5}{space}{reverse on}{cm b}{cm t}{reverse off}{cm b}{space}{up*2}{left}"
+69 rem fire laser and exit when collision detected
+70 pokev+2,x:forj=208to80step-8:pokev+3,j:POKEN+1,j:if(PEEK(V+31)AND2)=0thennext:goto90:data"7{right}0{right*3}0{right}1{right}000{right*5}311"
+
+80 FP=1024+(X)/8+INT((J-42)/8)*40:rem convert sprite location to screen memory location
+81 i=sgn(peek(fp)-32)+sgn(peek(fp-40)-32):rem count sparts of raider hit
+82 h=h+i:rem hit counter
+83 POKEFP,32:pokeFP-40,32:rem clear hit parts of raider
+84 ifh=32+l*32orh=128then30:rem check if level completed
+
+90 s=s+i:rem increment score
+91 POKEN+1,20:pokev+3,0:POKEN+1,0:rem beep and clear laser
+92 ifPEEK(V+31)<>1and(PEEK(V+30)AND1)=0then40:rem check for collisions
+93 data"zzzzzzz{cm x}{cm x}{cm x}{pi}{pi}{cm x}{cm x}{cm x}{cm x}{cm x}{pi}{pi}{cm x}{cm x}"
