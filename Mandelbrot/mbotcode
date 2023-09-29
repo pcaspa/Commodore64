@@ -1,4 +1,4 @@
-1 cut and paste in CMB PRG Studio
+1 rem cut and paste in CMB PRG Studio.  Comiple with BOSS
 2 rem {pound}real xl,xu,yl,yu,xinc,yinc,nreal,nimg,rz,iz,r2z,i2z,
 3 rem {pound}byte reps,width,weight,k,c,lb,hb,a
 4 rem {pound}word x
